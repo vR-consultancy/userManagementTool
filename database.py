@@ -157,16 +157,18 @@ def addFunction(function, sts_rec=1):
         print(e)
         return e
 
-def addApp(name_app,sts_rec=1):
+def addApp(name_app,sts_rec=1, toelichting = ''):
     import uuid 
-
+    if toelichting == None:
+        toelichting = ''
     try:
         conn = create_connection()
         c = conn.cursor()
         sql = "INSERT INTO rtapps values ('"+\
             str(uuid.uuid4())+"','"+\
             name_app +"','"+\
-            str(sts_rec)+"');"
+            str(sts_rec) + "','"+\
+            toelichting+"');"
         c.execute('pragma foreign_keys = ON;')
         c.execute(sql)
         conn.commit()
@@ -277,7 +279,7 @@ def addUser(voornaam, voorvoegsel, achternaam, email, aduser, topdesk_in, topdes
         return e
 
 
-def changeAppMeta(id_app, name_app, sts_rec):
+def changeAppMeta(id_app, name_app, sts_rec, toelichting=''):
     def d(gegeven):
 
         if type(gegeven) == list:
@@ -301,6 +303,7 @@ def changeAppMeta(id_app, name_app, sts_rec):
     sql = "UPDATE rtapps SET "+\
         "name_app = "+ d(name_app) +\
             ", sts_rec = " + d(sts_rec) +\
+                ", toelichting = " + d(toelichting) +\
                 " where id_app = " + d(id_app) + ";"
 
     conn = create_connection()
@@ -412,7 +415,8 @@ def createDB(test=False):
     rtappTable = """CREATE TABLE IF NOT EXISTS rtapps (
                 id_app text PRIMARY KEY,
                 name_app text,
-                sts_rec integer
+                sts_rec integer,
+                toelichting text
     );"""
 
     rtfunctionsTable = """CREATE TABLE IF NOT EXISTS rtfunctions (

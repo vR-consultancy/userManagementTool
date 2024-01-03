@@ -624,6 +624,7 @@ def register_callbacks(app):
             Output('appDeleted','value'),
             Output('changeAppName', 'value'),
             Output('changeAppMetaDiv','style'),
+            Output('changeAppToelichting','value'),
 
         ],
         [
@@ -639,6 +640,7 @@ def register_callbacks(app):
         appDeleted_r = no_update
         changeAppName_r = no_update
         changeAppMetaDivStyle_r = no_update
+        changeAppToelichting_r = no_update
 
 
         t = readTables()
@@ -652,6 +654,8 @@ def register_callbacks(app):
             else:
                 appDeleted_r = [['Verwijderd'][0]]
             changeAppName_r = aData['Applicatie'][0]
+            toelichting_r = aData['toelichting'][0]
+
 
             changeAppDivStyle_r = cssStyles['block']
             changeAppTitleDivStyle_r = {'display':'block'}
@@ -676,6 +680,7 @@ def register_callbacks(app):
             appDeleted_r,
             changeAppName_r,
             changeAppMetaDivStyle_r,
+            changeAppToelichting_r,
 
         ]
 
@@ -751,13 +756,14 @@ def register_callbacks(app):
             Input('changeAppName','value'),
             Input('chosenApp_tbv_saveMeta', 'data'),
             Input('resetSaveAppOutputTimer','n_intervals'),
-            Input('resetSaveAppOutputTimer', 'disabled'),
+            Input('resetSaveAppOutputTimer', 'disabled'),            
+            Input('changeAppToelichting','value'),
 
 
         ]
     )
 
-    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled):
+    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled, changeAppToelichting):
         saveAppMetaOutput_r = no_update 
         saveAppMetaBtn_r = 0
         resetSaveAppOutputTimerDisabled_r = no_update
@@ -769,7 +775,7 @@ def register_callbacks(app):
 
             resetSaveAppOutputTimerDisabled_r = False
             
-            o = changeAppMeta(chosenApp, changeAppName, appDeleted)
+            o = changeAppMeta(chosenApp, changeAppName, appDeleted, toelichting = changeAppToelichting)
             saveAppMetaOutput_r = o
 
 
@@ -801,11 +807,12 @@ def register_callbacks(app):
         [
             Input('saveNewAppBtn', 'n_clicks'),
             Input('newAppName','value'),
+            Input('newAppToelichting', 'value'),
             Input('newAppDeleted','value'),
         ]
     )
 
-    def nieuweApp(saveNewApp, appName, appDeleted):
+    def nieuweApp(saveNewApp, newAppToelichting, appName, appDeleted):
         saveNewAppOutput_r = no_update
         saveNewAppBtn_r = 0
 
@@ -820,7 +827,7 @@ def register_callbacks(app):
 
 
         if saveNewApp > 0:
-            o = addApp(appName, sts_rec=appDeleted)
+            o = addApp(appName, sts_rec=appDeleted, toelichting = newAppToelichting)
             saveNewAppOutput_r = o
 
         return [

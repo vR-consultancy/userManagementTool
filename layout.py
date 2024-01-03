@@ -50,6 +50,8 @@ def mainLayout():
                 ]
                 
             ), 
+        html.Button('Refresh', id='refreshBtn', n_clicks=0),
+
         dcc.Tabs(
             style=tabs_styles,
                     
@@ -127,7 +129,6 @@ def mainLayout():
 
 
 
-                    html.Button('Refresh', id='refreshBtn', n_clicks=0),
 
 
                     html.Div(id='Output'),
@@ -743,6 +744,25 @@ def mainLayout():
                                             ),
                                         ]
                                     ),
+                                    html.Div(
+                                        children = [
+                                            html.Div(
+                                                style = {'display':'inline-block','width': '10%'},
+                                                children = ['Toelichting']
+
+
+                                            ),
+                                            html.Div(
+                                                style = {'display':'inline-block'},
+                                                children = [
+                                                    dcc.Input(
+                                                        style = {'width':'400px'},
+                                                        id='newAppToelichting'
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    ),                                    
                                     html.Button(
                                         'Annuleren',
                                         id = 'cancelNewAppBtn',
@@ -812,7 +832,25 @@ def mainLayout():
                                             ),
                                         ]
                                     ),
+                                    html.Div(
+                                        children = [
+                                            html.Div(
+                                                style = {'display':'inline-block','width': '10%'},
+                                                children = ['Toelichting']
 
+
+                                            ),
+                                            html.Div(
+                                                style = {'display':'inline-block'},
+                                                children = [
+                                                    dcc.Input(
+                                                        style = {'width':'400px'},
+                                                        id='changeAppToelichting'
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    ),
                                     html.Button(
                                         'Wijzigingen opslaan',
                                         id = 'saveAppMetaBtn',
