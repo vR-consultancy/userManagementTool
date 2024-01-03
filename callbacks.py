@@ -492,7 +492,9 @@ def register_callbacks(app):
         table = dash_table.DataTable(
                 data=df.to_dict("records"),
                 columns=[{"name": i, "id": i} for i in df.columns],
-                
+                filter_action="native",
+                sort_action="native",
+                sort_mode='multi',                
                 style_table={"width": "100%", "align": 'center'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
@@ -516,7 +518,9 @@ def register_callbacks(app):
         functionsTable = dash_table.DataTable(
                 data=functions.to_dict("records"),
                 columns=[{"name": i, "id": i} for i in functions.columns],
-                
+                filter_action="native",
+                sort_action="native",
+                sort_mode='multi',                   
                 style_table={"width": "100%", "align": 'center'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
@@ -526,7 +530,9 @@ def register_callbacks(app):
         appsTable = dash_table.DataTable(
                 data=apps.to_dict("records"),
                 columns=[{"name": i, "id": i} for i in apps.columns],
-                
+                filter_action="native",
+                sort_action="native",
+                sort_mode='multi',                   
                 style_table={"width": "100%", "align": 'center'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
