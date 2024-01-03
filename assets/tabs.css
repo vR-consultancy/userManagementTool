@@ -1,0 +1,50 @@
+.tab-container {
+    background-color: #222;
+    color: rgb(238, 8, 8);
+    
+}
+
+.tab {
+    background-color: #222;
+    color: white;
+}
+
+.tab--selected {
+    background-color: #3f3f3f;
+    color: rgb(170, 0, 0);
+  
+
+    
+}
+
+.custom-tabs {
+    background-color: #1baef1;
+    color: rgb(170, 0, 0);
+
+}
+
+
+.custom-tab--selected {
+    background-color: #1bf126;
+    color: rgb(94, 0, 170);
+
+}
+
+
+.custom-tabs {
+    background-color: #7f1bf1;
+    color: rgb(94, 0, 170);
+
+}
+.custom-tab {
+    background-color: #caf11b;
+    color: rgb(94, 0, 170);
+
+}
+
+
+.custom-tabs-container {
+    background-color: #f1821b;
+    color: rgb(94, 0, 170);
+
+}

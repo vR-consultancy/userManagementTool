@@ -1,0 +1,24 @@
+# voorbeeld repo uitsluiten
+urenPy/
+dashScripts/
+
+# ipynb dingen uitsluiten
+
+__pycache__/
+
+# tests uitsluiten
+test*
+
+
+# databases uitsluiten
+*.db
+
+# config files uitsluiten
+
+*.conf
+
+
+# excels uitsluiten
+*.xlsx
+*.xls 
+*.xlsm
