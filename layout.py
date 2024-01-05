@@ -16,6 +16,16 @@ if not os.path.isfile(database):
     print("Geen database gevonden. Er is een lege database aangemaakt.")
 
 
+try:
+    import json
+    settings = json.load(open('settings.json'))
+except:
+    from deploy import createSettings
+    createSettings()
+    import json
+    settings = json.load(open('settings.json'))
+
+
 t = readTables()
 
 tabs_styles = {
@@ -46,7 +56,19 @@ def mainLayout():
                 id='header',
                 style=cssStyles['block'],
                 children = [
-                    html.H1('Noordoostpolder - Gebruikersbeheer'),
+                    html.Div(
+                        style = cssStyles['logo'],
+                        children = [
+                            html.Img(src='assets/logo.png',alt='Zet logo.png in de map \'assets\' om een logo weer te geven.')
+                        ]
+                    ),                        
+                    html.Div(
+                        style = cssStyles['title'],
+                        children = [
+                            html.H1(settings['companyname'] + ' - Gebruikersbeheer'),
+                        ]
+                    ),
+                
                 ]
                 
             ), 

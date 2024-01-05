@@ -465,10 +465,16 @@ def register_callbacks(app):
 
         if functionChooserDropdown == [''] or functionChooserDropdown == [] or functionChooserDropdown == None:
             functionChooserDropdown = t['rtfunctions'][t['rtfunctions']['sts_rec'].isin(functieInclVerwijderd)]['id_function'].values.tolist() + ['']
+        elif '' in functionChooserDropdown:
+            functionChooserDropdown += ['']
         if appChooserDropdown == [''] or appChooserDropdown == [] or appChooserDropdown == None:
             appChooserDropdown = t['rtapps'][t['rtapps']['sts_rec'].isin(appInclVerwijderd)]['id_app'].values.tolist() + ['']
+        elif '' in appChooserDropdown:
+            appChooserDropdown += ['']
         if userChooserDropdown == [''] or userChooserDropdown == [] or userChooserDropdown == None:
             userChooserDropdown = t['users'][t['users']['Status gebruiker'].isin(userInclVerwijderd)]['id_user'].values.tolist() + ['']
+        elif '' in userChooserDropdown:
+            userChooserDropdown += ['']
         if functionChangerChooseDropdown == [''] or functionChangerChooseDropdown == [] or functionChangerChooseDropdown == None: 
             functionChangerChooseDropdown = t['rtfunctions']['id_function'].values.tolist() + ['']
         

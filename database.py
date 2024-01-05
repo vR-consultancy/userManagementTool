@@ -597,7 +597,7 @@ def readTables():
     allTables['functions']['dd_begin'] = allTables['functions']['dd_begin'].apply(lambda x: db_to_dateTime(x) if not pd.isna(x) else (x))
     allTables['functions']['dd_eind'] = allTables['functions']['dd_eind'].apply(lambda x: db_to_dateTime(x) if not pd.isna(x) else (x))
 
-    allTables['users'] = allTables['users'].merge(allTables['functions'], on='id_user', how='left')
+    allTables['users'] = allTables['users'].merge(allTables['functions'][(allTables['functions']['dd_eind'].isnull()) & (allTables['functions']['sts_rec']==1)], on='id_user', how='left')
     allTables['users'] = allTables['users'].merge(allTables['rtfunctions'], left_on='id_function',right_on='id_function', how='left')
 
     allTables['usersGUI'] = allTables['users'][['id_user','Volledige naam','Voornaam','Voorvoegsels','Achternaam','Emailadres','id_function','function']].rename(columns={'function':'Functie'})
@@ -645,5 +645,4 @@ def usersPerApp(appID,functionID, userID):
     if userID == [''] or userID == [] or userID == None:
         userID = t['users']['id_user'].fillna('').values.tolist()
 
-
-    return t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user', how='left').merge(t['rtapps'], how='left').merge(t['functions'][t['functions']['id_function'].isin(functionID)], on=['id_user','id_function'], how='left')[['Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie']]
+    return t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user').merge(t['rtapps'],on ='id_app',  how='left').merge(t['functions'][t['functions']['id_function'].isin(functionID)], on=['id_user','id_function'])[['Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie']]

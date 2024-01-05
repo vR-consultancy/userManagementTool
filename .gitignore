@@ -16,9 +16,13 @@ test*
 # config files uitsluiten
 
 *.conf
-
+settings.json
 
 # excels uitsluiten
 *.xlsx
 *.xls 
 *.xlsm
+
+
+# logo uitsluiten
+assets/logo.png
