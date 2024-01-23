@@ -2,6 +2,8 @@ import dash,os
 from layout import mainLayout
 from callbacks import register_callbacks
 import dash_bootstrap_components as dbc
+from database import *
+from functions import *
 
 import sys
 
@@ -21,6 +23,27 @@ app.layout = mainLayout
 #--! Set Dash to suppress callback exceptions, because some callbacks can only be made when the first callback in the main layout has been made.
 
 register_callbacks(app)
+
+
+# version check
+try:
+
+    v = latestVersion()
+    version = v[0]
+
+    if version >= 1.0:
+        print('Versie '+ str(version))
+    else:
+        print('Outdated versie. Update draaien.')
+        from update import update10
+        update10()
+        
+        
+
+except:
+    print('Kon versie niet checken!')
+    exit()
+
 
 try:
     if sys.argv[1].lower() in ['test','debug']:

@@ -77,27 +77,31 @@ def addFunctionToUser(id_function, id_user, dd_begin, dd_eind = '', sts_rec = 1,
         toelichting= 'null'
     else:
         toelichting = """'"""+toelichting+"""'"""
+    if id_function != None:
 
-    try:
-        conn = create_connection()
-        c = conn.cursor()
-        sql = "INSERT INTO functions values ('"+\
-            str(uuid.uuid4())+"','"+\
-            id_function+"','"+\
-            id_user+"',"+\
-            dd_begin+","+\
-            dd_eind+","+\
-            toelichting+",'"+\
-            str(sts_rec)+"');"
-        c.execute('pragma foreign_keys = ON;')
-        c.execute(sql)
-        conn.commit()
+        try:
+            conn = create_connection()
+            c = conn.cursor()
+            sql = "INSERT INTO functions values ('"+\
+                str(uuid.uuid4())+"','"+\
+                id_function+"','"+\
+                id_user+"',"+\
+                dd_begin+","+\
+                dd_eind+","+\
+                toelichting+",'"+\
+                str(sts_rec)+"');"
+            c.execute('pragma foreign_keys = ON;')
+            c.execute(sql)
+            conn.commit()
 
-        return 'Functie toegevoegd'
+            return 'Functie toegevoegd'
 
-    except Error as e:
-        print(e)
-        return e
+        except Error as e:
+            print(e)
+            return e
+    else:
+        print('Functie niet gekozen. Er gebeurt niets.')
+        return 'Functie niet gekozen. Er gebeurt niets.'
 
 def changeFunctionMeta(id_function, name_function, sts_rec):
     def d(gegeven):
@@ -412,6 +416,11 @@ def createDB(test=False):
                     toelichting text
     );""" 
 
+    versionTable = """CREATE TABLE IF NOT EXISTS version (
+                    version text,
+                    datum text
+    );""" 
+
     rtappTable = """CREATE TABLE IF NOT EXISTS rtapps (
                 id_app text PRIMARY KEY,
                 name_app text,
@@ -453,6 +462,7 @@ def createDB(test=False):
     create_table(functionsTable)
     create_table(rtfunctionsTable)
     create_table(appsTable)
+    create_table(versionTable)
 
 
 
@@ -645,4 +655,31 @@ def usersPerApp(appID,functionID, userID):
     if userID == [''] or userID == [] or userID == None:
         userID = t['users']['id_user'].fillna('').values.tolist()
 
-    return t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user').merge(t['rtapps'],on ='id_app',  how='left').merge(t['functions'][t['functions']['id_function'].isin(functionID)], on=['id_user','id_function'])[['Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie']]
+    return t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user').merge(t['rtapps'],on ='id_app',  how='left').merge(t['functions'][(t['functions']['id_function'].isin(functionID)) & (t['functions']['sts_rec']==1)], on=['id_user','id_function'], how='left')[['Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie']]
+
+
+def latestVersion():
+    try:
+        v = readTable('version')
+        version = float(v.sort_values('datum', ascending=False)['version'].values.tolist()[0])
+        versionDate = db_to_dateTime(v.sort_values('datum', ascending=False)['datum'].values.tolist()[0])
+    except:
+        version = 0.0
+        from datetime import datetime
+        versionDate = datetime.now()
+    return [version, versionDate]
+
+def updateVersion(versionNumber):
+    from datetime import datetime
+    sql = "INSERT INTO version VALUES ('" + str(versionNumber) + "', '" + dateTime_to_db(datetime.now()) + "');"
+
+    conn = create_connection()
+    try:
+        c = conn.cursor()
+        c.execute('pragma foreign_keys = ON;')
+        c.execute(sql)
+        conn.commit()
+        return "Versie "+str(versionNumber)+" toegevoegd"
+    except Error as e:
+        print(e)
+        return e

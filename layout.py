@@ -4,7 +4,10 @@ from styles import layoutStyles
 import os, pathlib
 from functions import *
 from database import *
+from datetime import datetime 
 
+
+version = 'Versie: ' + str(latestVersion()[0]) + ' ('+datetime.strftime(latestVersion()[1], '%d-%m-%Y %H:%M')+')'
 
 cssStyles = layoutStyles()
 
@@ -51,7 +54,9 @@ tab_selected_style = {
 def mainLayout():
     return html.Div(
         children = [
-        
+        dcc.Markdown(
+            version
+        ),
         html.Div(
                 id='header',
                 style=cssStyles['block'],

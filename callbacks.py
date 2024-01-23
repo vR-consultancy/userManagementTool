@@ -279,8 +279,6 @@ def register_callbacks(app):
         [
             Output('saveMetaOutput','children'),
             Output('saveMetaBtn','n_clicks'),
-            Output('resetSaveOutputTimer', 'disabled'),
-            Output('resetSaveOutputTimer','n_intervals'),
         ],
         [
             Input('saveMetaBtn','n_clicks'),
@@ -297,7 +295,6 @@ def register_callbacks(app):
             Input('manager','value'),
             Input('toelichting','value'),
             Input('chosenUser_tbv_saveMeta', 'data'),
-            Input('resetSaveOutputTimer', 'n_intervals'),
             Input('newOrChangeUser','data'),
             Input('functie','value'),
 
@@ -306,11 +303,9 @@ def register_callbacks(app):
     )
 
 
-    def functie(saveMetaBtn,userDeleted, voornaam, voorvoegsels, achternaam, email, aduser, topdesk_in, topdesk_uit, begindatum, einddatum, manager, toelichting, chosenUser, resetSaveOutputTimer, newOrChangeUser, functie):
+    def functie(saveMetaBtn,userDeleted, voornaam, voorvoegsels, achternaam, email, aduser, topdesk_in, topdesk_uit, begindatum, einddatum, manager, toelichting, chosenUser, newOrChangeUser, functie):
         saveMetaOutput_r = no_update 
         saveMetaBtn_r = 0
-        resetSaveOutputTimerDisabled_r = no_update
-        resetSaveOutputTimerIntervals_r = 0
 
         if begindatum != None:
             begindatum += '_00:00'
@@ -318,8 +313,7 @@ def register_callbacks(app):
             einddatum += '_00:00'            
 
         if saveMetaBtn > 0:
-
-            resetSaveOutputTimerDisabled_r = False            
+       
             if newOrChangeUser == 'change':
                 o = changeUserMeta(chosenUser, voornaam, voorvoegsels, achternaam, email, aduser, topdesk_in, topdesk_uit, begindatum, einddatum, manager, toelichting, userDeleted)
                 o += '\n\n' + delFunctionForUser(chosenUser)
@@ -342,16 +336,11 @@ def register_callbacks(app):
                 saveMetaOutput_r = o
 
 
-        if resetSaveOutputTimer > 0:
-            resetSaveOutputTimerDisabled_r = True
-            saveMetaOutput_r = ''
 
 
         return [
             saveMetaOutput_r ,
             saveMetaBtn_r,
-            resetSaveOutputTimerDisabled_r,
-            resetSaveOutputTimerIntervals_r,
         ]
 
 
