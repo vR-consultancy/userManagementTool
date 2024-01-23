@@ -47,6 +47,6 @@ except:
         app,
         VALID_USERNAME_PASSWORD_PAIRS)
 
-
+context = ('domain.crt','domain.key')
 if __name__ == '__main__':
-    app.run_server(debug=debug,host='0.0.0.0', port=8051)
+    app.run_server(debug=debug,host='0.0.0.0', port=444, ssl_context=context)

@@ -543,7 +543,11 @@ def mainLayout():
                                                         
                                                     )
                                                 ]
-                                            ),                                    
+                                            ),         
+                                            html.Div(
+                                                style = {'display':'inline-block'},
+                                                children = ['(Voeg een gebruiker toe aan de functie \'Managementteam\' om een nieuwe manager toe te voegen)']
+                                            ),                                                                       
                                         ]
                                     ),
                                     html.Div(

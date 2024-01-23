@@ -26,3 +26,9 @@ settings.json
 
 # logo uitsluiten
 assets/logo.png
+
+
+# certificaten uitsluiten
+*.crt 
+*.key
+*.csr
