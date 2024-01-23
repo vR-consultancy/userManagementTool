@@ -818,7 +818,7 @@ def register_callbacks(app):
         ]
     )
 
-    def nieuweApp(saveNewApp, newAppToelichting, appName, appDeleted):
+    def nieuweApp(saveNewApp, appName, newAppToelichting, appDeleted):
         saveNewAppOutput_r = no_update
         saveNewAppBtn_r = 0
 
