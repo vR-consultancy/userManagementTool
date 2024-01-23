@@ -411,6 +411,8 @@ def register_callbacks(app):
                 Output('changeFunctionBtn','style'),
                 Output('chosenFunction_tbv_saveMeta','data'),
                 Output('dataTableFunctionDiv','children'),
+                Output('appChangerChooserDropdown','options'),
+                Output('functionChangerChooseDropdown', 'options'),
 
             ],
             [
@@ -448,6 +450,8 @@ def register_callbacks(app):
         changeFunctionBtnStyle_r = no_update
         chosenFunction_tbv_saveMeta_r = no_update
         datatableFunctionDiv_r = no_update
+        appChangerChooserDropdownOptions_r = no_update
+        functionChangerChooseDropdownOptions_r = no_update
 
         def inclVerwijderd(gegeven):
             if gegeven == ['Inclusief verwijderd']:
@@ -488,7 +492,9 @@ def register_callbacks(app):
                             & (t['allData']['Status functie'].isin(functieInclVerwijderd))].sort_values(by=['Sorteernaam','function','Applicatie'])
 
         appChooserDropdown_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtapps'][t['rtapps']['sts_rec'].isin(appInclVerwijderd)].sort_values(by=['Applicatie']).values.tolist()]
+        appChangerChooserDropdownOptions_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtapps'].sort_values(by=['Applicatie']).values.tolist()]
         functionChooserDropdown_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtfunctions'][t['rtfunctions']['sts_rec'].isin(functieInclVerwijderd)].sort_values(by=['function']).values.tolist()]
+        functionChangerChooseDropdownOptions_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtfunctions'].sort_values(by=['function']).values.tolist()]
         userChooserDropdown_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1] + ' ('+i[2]+')', 'value': i[0]} for i in ddData[['id_user','Sorteernaam', 'Emailadres']].drop_duplicates().values.tolist()]
         
 
@@ -616,6 +622,8 @@ def register_callbacks(app):
             changeFunctionBtnStyle_r,
             chosenFunction_tbv_saveMeta_r,
             datatableFunctionDiv_r,
+            appChangerChooserDropdownOptions_r,
+            functionChangerChooseDropdownOptions_r,
             ]
         
 
