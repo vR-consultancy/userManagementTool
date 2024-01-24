@@ -795,6 +795,7 @@ def register_callbacks(app):
             Output('changeAppName', 'value'),
             Output('changeAppMetaDiv','style'),
             Output('changeAppToelichting','value'),
+            Output('changeAppUrl','value'),
 
         ],
         [
@@ -811,6 +812,7 @@ def register_callbacks(app):
         changeAppName_r = no_update
         changeAppMetaDivStyle_r = no_update
         changeAppToelichting_r = no_update
+        changeAppUrl_r = no_update
 
 
         t = readTables()
@@ -824,7 +826,8 @@ def register_callbacks(app):
             else:
                 appDeleted_r = [['Verwijderd'][0]]
             changeAppName_r = aData['Applicatie'][0]
-            toelichting_r = aData['toelichting'][0]
+            changeAppToelichting_r = aData['toelichting'][0]
+            changeAppUrl_r = aData['url'][0]
 
 
             changeAppDivStyle_r = cssStyles['block']
@@ -851,6 +854,8 @@ def register_callbacks(app):
             changeAppName_r,
             changeAppMetaDivStyle_r,
             changeAppToelichting_r,
+            changeAppUrl_r,
+            
 
         ]
 
@@ -928,12 +933,13 @@ def register_callbacks(app):
             Input('resetSaveAppOutputTimer','n_intervals'),
             Input('resetSaveAppOutputTimer', 'disabled'),            
             Input('changeAppToelichting','value'),
+            Input('changeAppUrl','value'),
 
 
         ]
     )
 
-    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled, changeAppToelichting):
+    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled, changeAppToelichting, changeAppUrl):
         saveAppMetaOutput_r = no_update 
         saveAppMetaBtn_r = 0
         resetSaveAppOutputTimerDisabled_r = no_update
@@ -945,7 +951,7 @@ def register_callbacks(app):
 
             resetSaveAppOutputTimerDisabled_r = False
             
-            o = changeAppMeta(chosenApp, changeAppName, appDeleted, toelichting = changeAppToelichting)
+            o = changeAppMeta(chosenApp, changeAppName, appDeleted, toelichting = changeAppToelichting, url = changeAppUrl)
             saveAppMetaOutput_r = o
 
 

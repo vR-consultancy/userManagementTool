@@ -26,3 +26,16 @@ def update11():
     create_table(matrixTable)
     updateVersion(1.1)
 
+def update12():
+    print('Update naar v1.2 draaien')
+    from database import create_connection, updateVersion
+    con = create_connection()
+    sql = """ALTER TABLE rtapps ADD url text;"""     
+    try:
+        c = con.cursor()
+        c.execute('pragma foreign_keys = ON;')
+        c.execute(sql)
+        con.commit()
+    except Error as e:
+        print(e)
+    updateVersion(1.2)

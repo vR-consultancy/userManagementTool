@@ -24,6 +24,16 @@ try:
         from update import update11
         update11()       
     else:
+        pass  
+
+    v = latestVersion()
+    version = v[0]
+
+    if version < 1.2:
+        print('Outdated versie. Update draaien.')
+        from update import update12
+        update12()       
+    else:
         pass            
 
 except:

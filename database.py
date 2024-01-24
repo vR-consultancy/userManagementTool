@@ -191,10 +191,12 @@ def addFunction(function, sts_rec=1):
         print(e)
         return e
 
-def addApp(name_app,sts_rec=1, toelichting = ''):
+def addApp(name_app,sts_rec=1, toelichting = '', url = ''):
     import uuid 
     if toelichting == None:
         toelichting = ''
+    if url == None:
+        url = ''
     try:
         conn = create_connection()
         c = conn.cursor()
@@ -202,7 +204,8 @@ def addApp(name_app,sts_rec=1, toelichting = ''):
             str(uuid.uuid4())+"','"+\
             name_app +"','"+\
             str(sts_rec) + "','"+\
-            toelichting+"');"
+            toelichting +"','"+\
+            url+"');"
         c.execute('pragma foreign_keys = ON;')
         c.execute(sql)
         conn.commit()
@@ -313,7 +316,7 @@ def addUser(voornaam, voorvoegsel, achternaam, email, aduser, topdesk_in, topdes
         return e
 
 
-def changeAppMeta(id_app, name_app, sts_rec, toelichting=''):
+def changeAppMeta(id_app, name_app, sts_rec, toelichting='', url = ''):
     def d(gegeven):
 
         if type(gegeven) == list:
@@ -338,6 +341,7 @@ def changeAppMeta(id_app, name_app, sts_rec, toelichting=''):
         "name_app = "+ d(name_app) +\
             ", sts_rec = " + d(sts_rec) +\
                 ", toelichting = " + d(toelichting) +\
+                ", url = " + d(url) +\
                 " where id_app = " + d(id_app) + ";"
 
     conn = create_connection()

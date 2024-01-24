@@ -834,7 +834,26 @@ def mainLayout():
                                                 ]
                                             ),
                                         ]
-                                    ),                                    
+                                    ),                    
+                                    html.Div(
+                                        children = [
+                                            html.Div(
+                                                style = {'display':'inline-block','width': '10%'},
+                                                children = ['URL']
+
+
+                                            ),
+                                            html.Div(
+                                                style = {'display':'inline-block'},
+                                                children = [
+                                                    dcc.Input(
+                                                        style = {'width':'400px'},
+                                                        id='newAppUrl'
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    ),                                                         
                                     html.Button(
                                         'Annuleren',
                                         id = 'cancelNewAppBtn',
@@ -923,6 +942,25 @@ def mainLayout():
                                             ),
                                         ]
                                     ),
+                                    html.Div(
+                                        children = [
+                                            html.Div(
+                                                style = {'display':'inline-block','width': '10%'},
+                                                children = ['URL']
+
+
+                                            ),
+                                            html.Div(
+                                                style = {'display':'inline-block'},
+                                                children = [
+                                                    dcc.Input(
+                                                        style = {'width':'400px'},
+                                                        id='changeAppUrl'
+                                                    )
+                                                ]
+                                            ),
+                                        ]
+                                    ),                                    
                                     html.Button(
                                         'Wijzigingen opslaan',
                                         id = 'saveAppMetaBtn',
