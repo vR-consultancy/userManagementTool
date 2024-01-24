@@ -108,6 +108,10 @@ def mainLayout():
                                 data=None
                             ),
                             dcc.Store(
+                                id='chosenFunctionMatrix',
+                                data=None
+                            ),                            
+                            dcc.Store(
                                 id='chosenApp_tbv_saveMeta',
                                 data=None
                             ),
@@ -121,6 +125,10 @@ def mainLayout():
                             ),
                             dcc.Store(
                                 id='chosenFunction_tbv_saveMeta',
+                                data = None
+                            ),
+                            dcc.Store(
+                                id='chosenFunctionMatrix_tbv_saveMeta',
                                 data = None
                             ),
                             dcc.Interval(
@@ -149,7 +157,11 @@ def mainLayout():
                             dcc.Store(
                                 id='newOrChangeUser',
                                 data = None
-                            ),                 
+                            ),            
+                            dcc.Store(
+                                id='functieMatrixHelper',
+                                data = 'something'
+                            ),
                         ]
                     ),
 
@@ -1157,7 +1169,123 @@ def mainLayout():
                         ]
                     )
                 ]
-            ),        
+            ),     
+
+
+            dcc.Tab(
+                style=tab_style, selected_style=tab_selected_style,  
+                label = 'Functiematrix',
+                children = [
+                    html.Div(
+                        children = [
+
+                        
+                            dcc.Markdown('## Filters'),
+                            html.Div(
+                                id='matrixFilter',
+                                style = cssStyles['block'],
+                                children = [
+                                    html.Div(
+                                        children = [
+                                            html.Div(
+                                                children = [
+                                                    html.Div(
+                                                        style = {'display':'inline-block',
+                                                            'width':'10%'},
+                                                        children = [
+                                                            dcc.Markdown(
+                                                                '### Functie',
+                                                            )   
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        style={'display':'inline-block',
+                                                                'width': '80%'},
+                                                        children = [
+
+                                                            dcc.Dropdown(
+                                                                id = 'functionMatrixChangerChooseDropdown',
+                                                                value = [],
+                                                                options = [{'label': '', 'value': ''}]+[{'label': i[1], 'value': i[0]} for i in t['rtfunctions'].values.tolist()],
+                                                                multi=True,
+                                                            )    
+                                                        ]
+                    
+                                                    ),    
+
+
+
+
+
+
+                                                ]
+                                            )
+                                        ]
+                                    ),
+
+                         
+                                    html.Button(
+                                        'Functiematrix wijzigen',
+                                        id = 'changeFunctionMatrixBtn',
+                                        n_clicks=0,
+                                        style = {'display':'none'},
+                                    ),
+
+                                    html.H1(''),
+
+
+
+                                ]
+                            ),
+
+
+
+                            html.Div(
+                                id='changeFunctionMatrixTitleDiv',
+                                style = {'display':'none'},
+                                children = [html.H2('Wijzig functiematrix')]
+                            ),
+
+
+                            html.H3(''),
+
+                            html.Div(
+                                id='appsPerFunctionDiv',
+                                style = {'display':'none'},
+                                children = [
+                                    html.Div(
+                                        style = cssStyles['block'],
+                                        id = 'changeFunctionAppsDiv',
+                                    ),
+                                    html.Button(
+                                        'Applicaties opslaan',
+                                        id='saveAppsMatrixBtn',
+                                        n_clicks= 0,
+                                        style = {'display':'none'}
+                                    ),
+                                    html.Div(
+                                        id='outputSaveAppsMatrix'
+                                    )
+                                ]
+
+                            ), 
+
+
+                        ]
+                    )
+
+
+
+                ]
+
+
+
+
+            ), # einde dcc.Tab
+
+
+
+
          
         ]),
 

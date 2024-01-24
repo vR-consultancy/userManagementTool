@@ -27,7 +27,7 @@ def layoutStyles():
                 'border':'2px',
                 'border-style':'solid',
                 'border-radius': '20px',
-                'text-align':'center',
+                'text-align':'left',
                 'margin-left':'auto',
                 'margin-right':'auto',
                 'padding':'1%',

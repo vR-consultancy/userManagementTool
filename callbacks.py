@@ -274,6 +274,87 @@ def register_callbacks(app):
 
 
 
+    @app.callback(
+        [
+            Output('changeFunctionMatrixBtn','n_clicks'),
+            Output('changeFunctionAppsDiv','children'),
+            Output('changeFunctionMatrixTitleDiv','style'),
+            Output('appsPerFunctionDiv','style'),
+            Output('saveAppsMatrixBtn','style'),
+        ],
+        [
+            Input('changeFunctionMatrixBtn','n_clicks'),
+            Input('chosenFunctionMatrix','data'),
+
+        ]
+    )
+
+    def func(changeFunctionMatrixBtn, chosenFunctionMatrix):
+        changeFunctionMatrixBtn_r = 0
+        changeFunctionMatrixTitleDivStyle_r = no_update
+        appsPerFunctionDivStyle_r = no_update 
+        changeFunctionAppsDiv_r = no_update
+        saveAppsMatrixBtnStyle_r = no_update
+
+        patched_childrenFunctionMatrix = Patch()
+        for i in range(500):
+            del patched_childrenFunctionMatrix[i]
+        
+
+        if changeFunctionMatrixBtn > 0:
+
+            appsPerFunctionDivStyle_r = cssStyles['changeUserBlock']
+            changeFunctionMatrixTitleDivStyle_r = {'display':'block'}
+            saveAppsMatrixBtnStyle_r = cssStyles['button']
+
+            t = readTables()
+            
+            for i in t['rtapps'][['id_app','Applicatie']].sort_values(by=['Applicatie']).values.tolist():
+                if len(t['functionmatrix'][(t['functionmatrix']['id_function']==chosenFunctionMatrix) & (t['functionmatrix']['id_app'] == i[0])]) > 0:
+                    v = [i[1] + ' ('+ i[0]+')']
+                else:
+                    v = []
+                p = html.Div(
+                    children = [
+                        html.Div(
+                            style = {'display':'inline-block'},
+                            children = [
+                                dcc.Checklist(
+                                    id = {'type': 'functionMatrixChecklist','index': i[0]},
+                                    options = [i[1] + ' ('+i[0]+')'],
+                                    value = v
+                                )
+                            ]
+                        )                        
+                    ]
+                )
+
+
+                patched_childrenFunctionMatrix.append(p)
+
+
+                changeFunctionAppsDiv_r = patched_childrenFunctionMatrix
+
+        elif chosenFunctionMatrix == None or chosenFunctionMatrix == []:
+            changeFunctionMatrixTitleDivStyle_r = {'display':'none'}
+            appsPerFunctionDivStyle_r = {'display':'none'}
+            changeFunctionAppsDiv_r = html.Div()
+
+            saveAppsMatrixBtnStyle_r = {'display':'none'}
+        
+
+
+        return [
+            changeFunctionMatrixBtn_r,
+            changeFunctionAppsDiv_r,
+            changeFunctionMatrixTitleDivStyle_r,
+            appsPerFunctionDivStyle_r,
+            saveAppsMatrixBtnStyle_r,
+
+        ]
+
+
+
 
     @app.callback(
         [
@@ -381,6 +462,42 @@ def register_callbacks(app):
 
 
 
+    @app.callback(
+        [
+            Output('outputSaveAppsMatrix','children'),
+            Output('saveAppsMatrixBtn','n_clicks'),
+            Output('functieMatrixHelper','data'),
+        ],
+        [
+            Input('saveAppsMatrixBtn','n_clicks'),
+            Input({'type': 'functionMatrixChecklist','index': ALL}, "value"),
+            Input('chosenFunctionMatrix_tbv_saveMeta','data'),
+        ]
+    )
+    def functietje(saveAppsMatrixBtn, values,chosenFunctionMatrix):
+        outputSaveAppsMatrix_r = no_update
+        saveAppsMatrixBtn_r = 0
+        functieMatrixHelper_r = no_update
+
+
+
+        if saveAppsMatrixBtn > 0:
+            vals = []
+            for val in values:
+                if not val == []:
+                    vals.append(val[0][-37:-1])
+            changeFunctionMatrix(chosenFunctionMatrix, vals)
+            functieMatrixHelper_r = 'something'
+
+
+
+        return [
+            outputSaveAppsMatrix_r,
+            saveAppsMatrixBtn_r,
+            functieMatrixHelper_r,
+        ]
+
+
 
     @app.callback(
             [
@@ -402,6 +519,10 @@ def register_callbacks(app):
                 Output('dataTableFunctionDiv','children'),
                 Output('appChangerChooserDropdown','options'),
                 Output('functionChangerChooseDropdown', 'options'),
+                Output('functionMatrixChangerChooseDropdown','options'),
+                Output('changeFunctionMatrixBtn','style'),
+                Output('chosenFunctionMatrix_tbv_saveMeta','data'),
+                Output('chosenFunctionMatrix','data'),
 
             ],
             [
@@ -415,6 +536,8 @@ def register_callbacks(app):
                 Input('appChangerChooserDropdown','value'),
                 Input('changeUserTitleDiv', 'style'),
                 Input('functionChangerChooseDropdown','value'),
+                Input('functionMatrixChangerChooseDropdown','value'),
+                Input('changeFunctionMatrixTitleDiv','style'),
 
 
 
@@ -422,7 +545,7 @@ def register_callbacks(app):
 
             ]
     )
-    def functie(tableTimer, appChooserDropdown, functionChooserDropdown, userChooserDropdown, appInclVerwijderd, functieInclVerwijderd, userInclVerwijderd, appChangerChooserDropdown, changeUserTitleDivStyle, functionChangerChooseDropdown):
+    def functie(refreshBtn, appChooserDropdown, functionChooserDropdown, userChooserDropdown, appInclVerwijderd, functieInclVerwijderd, userInclVerwijderd, appChangerChooserDropdown, changeUserTitleDivStyle, functionChangerChooseDropdown, functionMatrixChangerChooseDropdown, changeFunctionMatrixTitleDivStyle):
         datatableDiv_r = no_update
         userChooserDropdown_r = no_update
         functionChooserDropdown_r = no_update
@@ -441,6 +564,10 @@ def register_callbacks(app):
         datatableFunctionDiv_r = no_update
         appChangerChooserDropdownOptions_r = no_update
         functionChangerChooseDropdownOptions_r = no_update
+        functionMatrixChangerChooseDropdownOptions_r = no_update
+        changeFunctionMatrixBtnStyle_r = no_update 
+        chosenFunctionMatrixData_r = no_update 
+        chosenFunctionMatrix_tbv_saveMeta_r = no_update    
 
         def inclVerwijderd(gegeven):
             if gegeven == ['Inclusief verwijderd']:
@@ -471,6 +598,10 @@ def register_callbacks(app):
         if functionChangerChooseDropdown == [''] or functionChangerChooseDropdown == [] or functionChangerChooseDropdown == None: 
             functionChangerChooseDropdown = t['rtfunctions']['id_function'].values.tolist() + ['']
         
+        if functionMatrixChangerChooseDropdown == [''] or functionMatrixChangerChooseDropdown == [] or functionMatrixChangerChooseDropdown == None: 
+            functionMatrixChangerChooseDropdown = t['rtfunctions']['id_function'].values.tolist() + ['']
+        
+
         t['allData'] = t['allData'].fillna('')
         
         ddData = t['allData'][(t['allData']['id_function'].isin(functionChooserDropdown))\
@@ -484,8 +615,9 @@ def register_callbacks(app):
         appChangerChooserDropdownOptions_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtapps'].sort_values(by=['Applicatie']).values.tolist()]
         functionChooserDropdown_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtfunctions'][t['rtfunctions']['sts_rec'].isin(functieInclVerwijderd)].sort_values(by=['function']).values.tolist()]
         functionChangerChooseDropdownOptions_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtfunctions'].sort_values(by=['function']).values.tolist()]
+        functionMatrixChangerChooseDropdownOptions_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1], 'value': i[0]} for i in t['rtfunctions'].sort_values(by=['function']).values.tolist()]
         userChooserDropdown_r = [{'label':'(leeg)','value': ''}] + [{'label': i[1] + ' ('+i[2]+')', 'value': i[0]} for i in ddData[['id_user','Sorteernaam', 'Emailadres']].drop_duplicates().values.tolist()]
-        
+
 
 
         df = usersPerApp(appChooserDropdown, functionChooserDropdown, userChooserDropdown)
@@ -569,6 +701,16 @@ def register_callbacks(app):
             changeFunctionBtnStyle_r = {'display':'none'}
             chosenFunctionData_r = None
 
+        if len(functionMatrixChangerChooseDropdown) == 1 and functionMatrixChangerChooseDropdown != ['']:
+            if changeFunctionMatrixTitleDivStyle == {'display':'none'}:
+                changeFunctionMatrixBtnStyle_r = cssStyles['button']
+            else:
+                changeFunctionMatrixBtnStyle_r = {'display':'none'}
+            chosenFunctionMatrixData_r = functionMatrixChangerChooseDropdown[0]
+        else:
+            changeFunctionMatrixBtnStyle_r = {'display':'none'}
+            chosenFunctionMatrixData_r = None
+
 
         if len(appChangerChooserDropdown) == 1 and appChangerChooserDropdown != ['']:
             changeAppBtnStyle_r = cssStyles['button']
@@ -593,6 +735,7 @@ def register_callbacks(app):
         chosenUser_tbv_saveApps_r = chosenUserData_r
         chosenApp_tbv_saveMeta_r = chosenAppData_r
         chosenFunction_tbv_saveMeta_r = chosenFunctionData_r
+        chosenFunctionMatrix_tbv_saveMeta_r = chosenFunctionMatrixData_r
 
         return [
             datatableDiv_r,
@@ -613,6 +756,10 @@ def register_callbacks(app):
             datatableFunctionDiv_r,
             appChangerChooserDropdownOptions_r,
             functionChangerChooseDropdownOptions_r,
+            functionMatrixChangerChooseDropdownOptions_r,
+            changeFunctionMatrixBtnStyle_r,
+            chosenFunctionMatrixData_r,
+            chosenFunctionMatrix_tbv_saveMeta_r,
             ]
         
 
@@ -1032,6 +1179,5 @@ def register_callbacks(app):
             changeFunctionMetaDivStyle_r,
 
         ]
-
 
 

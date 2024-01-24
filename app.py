@@ -31,17 +31,27 @@ try:
     v = latestVersion()
     version = v[0]
 
-    if version >= 1.0:
-        print('Versie '+ str(version))
-    else:
+    if version < 1.0:
         print('Outdated versie. Update draaien.')
         from update import update10
-        update10()
+        update10()        
         
-        
+    else:
+        pass
+
+
+    v = latestVersion()
+    version = v[0]
+
+    if version < 1.1:
+        print('Outdated versie. Update draaien.')
+        from update import update11
+        update11()       
+    else:
+        pass            
 
 except:
-    print('Kon versie niet checken!')
+    print('Kon versie niet checken! Aborted..')
     exit()
 
 

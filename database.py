@@ -139,8 +139,38 @@ def changeFunctionMeta(id_function, name_function, sts_rec):
     except Error as e:
         print(e)
         return e
-        
 
+
+
+def changeFunctionMatrix(id_function, listApps):
+    t = readTables()
+    if len(t['functionmatrix'][t['functionmatrix']['id_function']==id_function]) > 0:
+        conn = create_connection()
+        c = conn.cursor()        
+        sql = "DELETE FROM functionmatrix WHERE id_function = '" + id_function + "';"
+        c.execute('pragma foreign_keys = ON;')
+        c.execute(sql)
+        conn.commit()   
+
+    import uuid 
+    conn = create_connection()
+    c = conn.cursor()   
+    c.execute('pragma foreign_keys = ON;')    
+    try:
+        for i in listApps:
+            sql = "INSERT INTO functionmatrix VALUES ('" +\
+                str(uuid.uuid4())+"','"+\
+                    id_function+"','"+\
+                        i+"',1);"
+
+
+            c.execute(sql)
+        conn.commit()   
+        print('Functiematrix aangepast')
+        return 'Functiematrix aangepast'
+    except Error as e:
+        print(e)
+        return e
 
 def addFunction(function, sts_rec=1):
     import uuid 
@@ -582,7 +612,10 @@ def readTables():
     'rtfunctions': readTable('rtfunctions'),
     'rtapps': readTable('rtapps'),
     'apps': readTable('apps'),
-    'functions': readTable('functions')}
+    'functions': readTable('functions'),
+    'functionmatrix': readTable('functionmatrix'),
+    }
+    
     
     # users table aanpassen
     allTables['users']['Volledige naam'] = allTables['users']['voornaam']+' '+ allTables['users']['voorvoegsels'].apply(lambda x: '' if pd.isna(x) else ('' if x == '' else x +' ' )) + allTables['users']['achternaam']
