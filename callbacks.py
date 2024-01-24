@@ -240,7 +240,7 @@ def register_callbacks(app):
             changeUserTitleDivStyle_r = {'display':'none'}
             changeUserDiv_r = {'display':'none'}
             changeUserAppsDiv_r = html.Div()
-
+        
 
         return [
             changeUserTitleDivStyle_r,
@@ -271,7 +271,24 @@ def register_callbacks(app):
             newUserBtnStyle_r,
         ]
 
+    @app.callback(
+        [
+            Output('defaultAppsDiv','children'),
 
+        ],
+        [
+            Input('functie_tbv_functiematrix','data'),
+        ]
+    )
+
+    def funct(functie):
+        t = readTables()
+        f = t['functionmatrix'].merge(t['rtapps'], on='id_app', how='left')
+        txt = ''
+        for i in f[f['id_function']==functie]['Applicatie'].values.tolist():
+            txt += '* '+ i + '\n'
+        
+        return [dcc.Markdown(txt)]
 
 
     @app.callback(
@@ -360,6 +377,7 @@ def register_callbacks(app):
         [
             Output('saveMetaOutput','children'),
             Output('saveMetaBtn','n_clicks'),
+            Output('functie_tbv_functiematrix','data'),
         ],
         [
             Input('saveMetaBtn','n_clicks'),
@@ -387,6 +405,7 @@ def register_callbacks(app):
     def functie(saveMetaBtn,userDeleted, voornaam, voorvoegsels, achternaam, email, aduser, topdesk_in, topdesk_uit, begindatum, einddatum, manager, toelichting, chosenUser, newOrChangeUser, functie):
         saveMetaOutput_r = no_update 
         saveMetaBtn_r = 0
+        functie_tbv_functiematrixData_r = no_update
 
         if begindatum != None:
             begindatum += '_00:00'
@@ -416,12 +435,13 @@ def register_callbacks(app):
                 o += addFunctionToUser(functie, chosenUser, datetime.now())
                 saveMetaOutput_r = o
 
-
+        functie_tbv_functiematrixData_r = functie
 
 
         return [
             saveMetaOutput_r ,
             saveMetaBtn_r,
+            functie_tbv_functiematrixData_r,
         ]
 
 

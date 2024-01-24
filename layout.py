@@ -131,6 +131,10 @@ def mainLayout():
                                 id='chosenFunctionMatrix_tbv_saveMeta',
                                 data = None
                             ),
+                            dcc.Store(
+                                id='functie_tbv_functiematrix',
+                                data = None
+                            ),
                             dcc.Interval(
                                 id='tableTimer',
                                 disabled = True,
@@ -639,7 +643,32 @@ def mainLayout():
                                 style = cssStyles['changeUserBlock'],
                                 children = [
                                     html.Div(
+                                        children = [
+                                            html.Div(
+                                                style = {'display':'inline-block', 'width':'50%'},
+                                                children = [
+                                                    html.H2('Standaard applicaties voor de functie')
+                                                ]
+                                            ),
+                                            html.Div(
+                                                style = {'display':'inline-block', 'width':'50%'},
+                                                children = [
+                                                    html.H3('Geautoriseerde applicaties')
+                                                ]
+                                            )        
+                                        ]
+                                
+                                    ),
+                                    html.Div(
+                                        style = {'display':'inline-block', 'width':'50%'},
+                                        id = 'defaultAppsDiv',
+                                        children = [
+                                        ]
+                                    ),
+                                    html.Div(
+                                        style = {'display':'inline-block', 'width':'50%'},
                                         id = 'changeUserAppsDiv',
+                                        
                                     ),
                                     html.Button(
                                         'Applicatietoegang opslaan',
