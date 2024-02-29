@@ -135,6 +135,10 @@ def mainLayout():
                                 id='functie_tbv_functiematrix',
                                 data = None
                             ),
+                            dcc.Store(
+                                id='chosenUser_tbv_welkomstmail',
+                                data = None
+                            ),
                             dcc.Interval(
                                 id='tableTimer',
                                 disabled = True,
@@ -325,6 +329,12 @@ def mainLayout():
                                 ]
                             ),
                             html.Button(
+                                'Tekst welkomstmail genereren',
+                                id = 'showWelcomTextBtn',
+                                n_clicks=0,
+                                style = {'display':'none'},
+                            ),                            
+                            html.Button(
                                 'Gebruiker wijzigen',
                                 id = 'changeUserBtn',
                                 n_clicks=0,
@@ -337,7 +347,26 @@ def mainLayout():
                                 style = cssStyles['button'],
                             ),                            
                         ]
+                        
                     ),
+                    html.H1(''),
+                    html.Div(
+                        id='welkomstTekstDiv',
+                        style = {'display':'none'},
+                        children = [
+                            html.H2('Welkomstmail'),
+                            html.Div(
+                                id='welkomstMailText',
+                                children = []
+                            ),
+                            html.Button(
+                                'Annuleer',
+                                id = 'cancelWelcomeTextBtn',
+                                n_clicks = 0,
+                            )
+                        ]
+                    ),
+
 
 
                     html.H1(''),
@@ -797,6 +826,11 @@ def mainLayout():
                                         options = ['Verwijderd'],
                                         value = []
                                     ),
+                                    dcc.Checklist(
+                                        id='newAppSSO',
+                                        options = ['SSO'],
+                                        value = []
+                                    ),                                    
                                     html.Div(
                                         children = [
                                             html.Div(
@@ -904,6 +938,11 @@ def mainLayout():
                                         options = ['Verwijderd'],
                                         value = []
                                     ),
+                                    dcc.Checklist(
+                                        id='appSSO',
+                                        options = ['SSO'],
+                                        value = []
+                                    ),                                          
                                     html.Div(
                                         children = [
                                             html.Div(

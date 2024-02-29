@@ -32,3 +32,7 @@ assets/logo.png
 *.crt 
 *.key
 *.csr
+
+
+# welkomstmail tekst uitsluiten
+welkomstmail.md
