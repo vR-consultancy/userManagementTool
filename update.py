@@ -39,3 +39,18 @@ def update12():
     except Error as e:
         print(e)
     updateVersion(1.2)
+
+
+def update13():
+    print('Update naar v1.3 draaien')
+    from database import create_connection, updateVersion
+    con = create_connection()
+    sql = """ALTER TABLE rtapps ADD sso text;"""     
+    try:
+        c = con.cursor()
+        c.execute('pragma foreign_keys = ON;')
+        c.execute(sql)
+        con.commit()
+    except Error as e:
+        print(e)
+    updateVersion(1.3)    

@@ -191,12 +191,16 @@ def addFunction(function, sts_rec=1):
         print(e)
         return e
 
-def addApp(name_app,sts_rec=1, toelichting = '', url = ''):
+def addApp(name_app,sts_rec=1, toelichting = '', url = '', sso = ''):
     import uuid 
     if toelichting == None:
         toelichting = ''
     if url == None:
         url = ''
+    if sso in [[], '']:
+        sso = '9'
+    else:
+        sso = '1'
     try:
         conn = create_connection()
         c = conn.cursor()
@@ -205,7 +209,8 @@ def addApp(name_app,sts_rec=1, toelichting = '', url = ''):
             name_app +"','"+\
             str(sts_rec) + "','"+\
             toelichting +"','"+\
-            url+"');"
+            url+"','"+\
+            sso+"');"
         c.execute('pragma foreign_keys = ON;')
         c.execute(sql)
         conn.commit()
@@ -316,7 +321,11 @@ def addUser(voornaam, voorvoegsel, achternaam, email, aduser, topdesk_in, topdes
         return e
 
 
-def changeAppMeta(id_app, name_app, sts_rec, toelichting='', url = ''):
+def changeAppMeta(id_app, name_app, sts_rec, toelichting='', url = '', sso = ''):
+    if sso in [[],'']:
+        sso = '9'
+    else:
+        sso = '1'
     def d(gegeven):
 
         if type(gegeven) == list:
@@ -342,6 +351,7 @@ def changeAppMeta(id_app, name_app, sts_rec, toelichting='', url = ''):
             ", sts_rec = " + d(sts_rec) +\
                 ", toelichting = " + d(toelichting) +\
                 ", url = " + d(url) +\
+                ", sso = " + sso +\
                 " where id_app = " + d(id_app) + ";"
 
     conn = create_connection()
@@ -647,7 +657,7 @@ def readTables():
     allTables['users'] = allTables['users'].merge(allTables['functions'][(allTables['functions']['dd_eind'].isnull()) & (allTables['functions']['sts_rec']==1)], on='id_user', how='left')
     allTables['users'] = allTables['users'].merge(allTables['rtfunctions'], left_on='id_function',right_on='id_function', how='left')
 
-    allTables['usersGUI'] = allTables['users'][['id_user','Volledige naam','Voornaam','Voorvoegsels','Achternaam','Emailadres','id_function','function']].rename(columns={'function':'Functie'})
+    allTables['usersGUI'] = allTables['users'][['id_user','AD gebruikersnaam','Volledige naam','Voornaam','Voorvoegsels','Achternaam','Emailadres','id_function','function']].rename(columns={'function':'Functie'})
 
     # alle data in 1 DF
     functies = allTables['functions'].merge(allTables['rtfunctions'], on= 'id_function').rename(columns = {
@@ -692,7 +702,14 @@ def usersPerApp(appID,functionID, userID):
     if userID == [''] or userID == [] or userID == None:
         userID = t['users']['id_user'].fillna('').values.tolist()
 
-    return t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user').merge(t['rtapps'],on ='id_app',  how='left').merge(t['functions'][(t['functions']['id_function'].isin(functionID)) & (t['functions']['sts_rec']==1)], on=['id_user','id_function'], how='left')[['Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie']]
+    toReturn = t['usersGUI'][t['usersGUI']['id_user'].isin(userID)].merge(t['apps'][t['apps']['id_app'].isin(appID)], on='id_user').merge(t['rtapps'],on ='id_app',  how='left').merge(t['functions'][(t['functions']['id_function'].isin(functionID)) & (t['functions']['sts_rec']==1)], on=['id_user','id_function'], how='left')[['id_user','Applicatie','Voornaam','Voorvoegsels','Achternaam','Volledige naam','Emailadres','Functie', 'AD gebruikersnaam']]
+    toReturn = toReturn.rename(columns = {
+        'id_user': 'ID gebruiker',
+
+
+
+    })
+    return toReturn
 
 
 def latestVersion():

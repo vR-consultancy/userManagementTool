@@ -16,6 +16,103 @@ cssStyles = layoutStyles()
 def register_callbacks(app):
 
 
+    @app.callback(
+        [
+            Output('welkomstTekstDiv','style'),
+            Output('welkomstMailText','children'),
+            Output('showWelcomTextBtn','n_clicks'),
+            Output('cancelWelcomeTextBtn','n_clicks'),
+        ],
+        [
+            Input('chosenUser_tbv_saveApps','data'),
+            Input('showWelcomTextBtn','n_clicks'),
+            Input('cancelWelcomeTextBtn','n_clicks'),
+        ]
+    )
+
+    def functie(userID, welkomsttekstBtn, cancelWelcomeTextBtn):
+        welkomstTekstDivStyle_r = no_update
+        welkomstMailTextChildren_r = no_update
+        showWelcomTextBtn_r = 0
+        cancelWelcomeTextBtn_r = 0
+
+        if welkomsttekstBtn > 0:
+            welkomstTekstDivStyle_r = cssStyles['welkomstMailBlock']
+            u = readTable('users')
+            user = u[(u['id_user'] == userID) & (u['sts_rec'] == 1)].reset_index().to_dict()
+            a = readTable('apps').merge(readTable('rtapps'), how = 'left', on = 'id_app')
+            apps = a[(a['id_user']==userID) & (a['sts_rec_x']==1) & (a['sts_rec_y']==1)].reset_index().to_dict()            
+
+            tekst = '''
+Hallo en welkom ''' + user['voornaam'][0] + ''',''' + '''
+
+'''         
+            try:
+                with open('welkomstmail.md') as file:
+                    tekst += file.read()
+            except:
+                tekst += '''
+
+WAARSCHUWING! Tekst voor welkomstmail niet gevonden!
+Genereer het bestand 'welkomstmail.md' met tekst (in Markdown-formaat) om deze tekst hier te tonen!
+
+
+'''
+
+            for i in apps['id']:
+                tekst += '''
+'''
+                tekst += '-'*50
+                tekst += '''
+'''
+                tekst += '''**''' + apps['name_app'][i] + '''**'''
+                if apps['sso'][i] == '1':
+                    tekst += '''
+
+Geen inlog nodig, je logt automatisch in.
+
+'''
+                else: 
+                    tekst += '''
+
+**Gebruikersnaam**:     GEBRUIKERSNAAM
+
+**Wachtwoord**:         WACHTWOORD
+
+
+'''             
+                if not apps['url'][i] == None:
+                    tekst += '''
+
+Je benadert deze applicatie via [deze link](''' + apps['url'][i]  + ''').
+
+'''
+                
+
+            tekst += '''
+
+Veel succes en werkplezier toegewenst!
+
+'''
+            welkomstMailTextChildren_r = dcc.Markdown(
+                tekst
+            )
+
+
+                
+            
+
+
+
+        elif cancelWelcomeTextBtn > 0:
+            welkomstTekstDivStyle_r = {'display':'none'}
+
+        return [
+            welkomstTekstDivStyle_r,
+            welkomstMailTextChildren_r,
+            showWelcomTextBtn_r,
+            cancelWelcomeTextBtn_r,
+        ]
 
 
     ## USERS
@@ -529,6 +626,7 @@ def register_callbacks(app):
                 Output('chosenUser','data'),
                 Output('chosenUser_tbv_saveMeta','data'),
                 Output('chosenUser_tbv_saveApps','data'),
+                Output('chosenUser_tbv_welkomstmail','data'),
                 Output('chosenApp','data'),
                 Output('changeAppBtn','style'),
                 Output('chosenApp_tbv_saveMeta','data'),
@@ -543,6 +641,7 @@ def register_callbacks(app):
                 Output('changeFunctionMatrixBtn','style'),
                 Output('chosenFunctionMatrix_tbv_saveMeta','data'),
                 Output('chosenFunctionMatrix','data'),
+                Output('showWelcomTextBtn','style'),
 
             ],
             [
@@ -574,6 +673,7 @@ def register_callbacks(app):
         chosenUserData_r = no_update
         chosenUser_tbv_saveMeta_r = no_update
         chosenUser_tbv_saveApps_r = no_update
+        chosenUser_tbv_welkomstmail_r = no_update
         chosenAppData_r = no_update
         changeAppBtnStyle_r = no_update
         chosenApp_tbv_saveMeta_r = no_update
@@ -588,6 +688,7 @@ def register_callbacks(app):
         changeFunctionMatrixBtnStyle_r = no_update 
         chosenFunctionMatrixData_r = no_update 
         chosenFunctionMatrix_tbv_saveMeta_r = no_update    
+        showWelcomTexBtnStyle_r = no_update
 
         def inclVerwijderd(gegeven):
             if gegeven == ['Inclusief verwijderd']:
@@ -648,7 +749,7 @@ def register_callbacks(app):
                 filter_action="native",
                 sort_action="native",
                 sort_mode='multi',                
-                style_table={"width": "100%", "align": 'center'},
+                style_table={"width": "100%", "align": 'center', 'overflowX':'scroll'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
                 style_cell={'backgroundColor': '#303230', 'color': 'white'}
@@ -674,7 +775,7 @@ def register_callbacks(app):
                 filter_action="native",
                 sort_action="native",
                 sort_mode='multi',                   
-                style_table={"width": "100%", "align": 'center'},
+                style_table={"width": "100%", "align": 'center', 'overflowX':'scroll'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
                 style_cell={'backgroundColor': '#303230', 'color': 'white'}
@@ -686,7 +787,7 @@ def register_callbacks(app):
                 filter_action="native",
                 sort_action="native",
                 sort_mode='multi',                   
-                style_table={"width": "100%", "align": 'center'},
+                style_table={"width": "100%", "align": 'center', 'overflowX':'scroll'},
                 style_filter={'backgroundColor': 'black'}, 
                 style_header={'backgroundColor': 'black'},
                 style_cell={'backgroundColor': '#303230', 'color': 'white'}
@@ -743,16 +844,20 @@ def register_callbacks(app):
         if len(userChooserDropdown) == 1 and userChooserDropdown != ['']:
             if changeUserTitleDivStyle == {'display':'none'}:
                 changeUserBtnStyle_r = cssStyles['button']
+                showWelcomTexBtnStyle_r = cssStyles['button']
             else:
                 changeUserBtnStyle_r = {'display':'none'}
+                showWelcomTexBtnStyle_r = {'display':'none'}
             chosenUserData_r = userChooserDropdown[0]
         else:
             
             changeUserBtnStyle_r = {'display':'none'}
+            showWelcomTexBtnStyle_r = {'display':'none'}
             chosenUserData_r = None
 
         chosenUser_tbv_saveMeta_r = chosenUserData_r
         chosenUser_tbv_saveApps_r = chosenUserData_r
+        chosenUser_tbv_welkomstmail_r = chosenUserData_r
         chosenApp_tbv_saveMeta_r = chosenAppData_r
         chosenFunction_tbv_saveMeta_r = chosenFunctionData_r
         chosenFunctionMatrix_tbv_saveMeta_r = chosenFunctionMatrixData_r
@@ -766,6 +871,7 @@ def register_callbacks(app):
             chosenUserData_r,
             chosenUser_tbv_saveMeta_r,
             chosenUser_tbv_saveApps_r,
+            chosenUser_tbv_welkomstmail_r,
             chosenAppData_r,
             changeAppBtnStyle_r,
             chosenApp_tbv_saveMeta_r,
@@ -780,6 +886,7 @@ def register_callbacks(app):
             changeFunctionMatrixBtnStyle_r,
             chosenFunctionMatrixData_r,
             chosenFunctionMatrix_tbv_saveMeta_r,
+            showWelcomTexBtnStyle_r,
             ]
         
 
@@ -796,6 +903,7 @@ def register_callbacks(app):
             Output('changeAppMetaDiv','style'),
             Output('changeAppToelichting','value'),
             Output('changeAppUrl','value'),
+            Output('appSSO','value'),
 
         ],
         [
@@ -813,6 +921,7 @@ def register_callbacks(app):
         changeAppMetaDivStyle_r = no_update
         changeAppToelichting_r = no_update
         changeAppUrl_r = no_update
+        appSSO_r = no_update
 
 
         t = readTables()
@@ -821,6 +930,10 @@ def register_callbacks(app):
 
 
         if changeAppBtn > 0:
+            if aData['sso'][0]==1:
+                appSSO_r = ['SSO']
+            else:
+                appSSO_r = []
             if aData['sts_rec'][0]==1:
                 appDeleted_r = []
             else:
@@ -855,6 +968,7 @@ def register_callbacks(app):
             changeAppMetaDivStyle_r,
             changeAppToelichting_r,
             changeAppUrl_r,
+            appSSO_r,
             
 
         ]
@@ -934,12 +1048,13 @@ def register_callbacks(app):
             Input('resetSaveAppOutputTimer', 'disabled'),            
             Input('changeAppToelichting','value'),
             Input('changeAppUrl','value'),
+            Input('appSSO','value'),
 
 
         ]
     )
 
-    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled, changeAppToelichting, changeAppUrl):
+    def fu(saveAppMetaBtn, appDeleted, changeAppName, chosenApp, resetSaveAppOutputTimer, disabled, changeAppToelichting, changeAppUrl, appSSO):
         saveAppMetaOutput_r = no_update 
         saveAppMetaBtn_r = 0
         resetSaveAppOutputTimerDisabled_r = no_update
@@ -951,7 +1066,7 @@ def register_callbacks(app):
 
             resetSaveAppOutputTimerDisabled_r = False
             
-            o = changeAppMeta(chosenApp, changeAppName, appDeleted, toelichting = changeAppToelichting, url = changeAppUrl)
+            o = changeAppMeta(chosenApp, changeAppName, appDeleted, toelichting = changeAppToelichting, url = changeAppUrl, sso = appSSO)
             saveAppMetaOutput_r = o
 
 
@@ -985,10 +1100,11 @@ def register_callbacks(app):
             Input('newAppName','value'),
             Input('newAppToelichting', 'value'),
             Input('newAppDeleted','value'),
+            Input('newAppSSO','value'),
         ]
     )
 
-    def nieuweApp(saveNewApp, appName, newAppToelichting, appDeleted):
+    def nieuweApp(saveNewApp, appName, newAppToelichting, appDeleted, appSSO):
         saveNewAppOutput_r = no_update
         saveNewAppBtn_r = 0
 
@@ -1003,7 +1119,7 @@ def register_callbacks(app):
 
 
         if saveNewApp > 0:
-            o = addApp(appName, sts_rec=appDeleted, toelichting = newAppToelichting)
+            o = addApp(appName, sts_rec=appDeleted, toelichting = newAppToelichting, sso = appSSO)
             saveNewAppOutput_r = o
 
         return [

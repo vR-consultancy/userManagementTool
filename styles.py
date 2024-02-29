@@ -32,6 +32,13 @@ def layoutStyles():
                 'margin-right':'auto',
                 'padding':'1%',
             },
+        'welkomstMailBlock':
+            {
+                'background-color': 'white',
+                'color':'black',
+                'font-family': 'arial',
+                # 'font-size': 'x-small',
+            },
         'changeUserBlock':
             {
                 'border-style':'solid',

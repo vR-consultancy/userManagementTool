@@ -36,6 +36,13 @@ try:
     else:
         pass            
 
+    if version < 1.3:
+        print('Outdated versie. Update draaien.')
+        from update import update13
+        update13()       
+    else:
+        pass       
+
 except:
     print('Kon versie niet checken! Aborted..')
     exit()
